@@ -14,12 +14,15 @@ server = app.server
 apple = pd.read_csv('')
 
 app.layout = html.Div(children=[
-    html.H1('Apple Stock Price')
-    html.Div('Dash: Dashboard with Python')
+    html.H1('Apple Stock Price'),
+    html.Div('Dash: Dashboard with Python'),
     dcc.Graph(id='apple',
               figure={'data': apple,
-                      'layout': {'title':'Bar Plots'
-                                 }})
+                      'layout': {
+                          'title':'Apple Stock Price'
+                                 }
+                      }
+              )
 ])
 
 if __name__ == '__main__':
