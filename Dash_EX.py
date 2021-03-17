@@ -14,7 +14,7 @@ from dash.dependencies import Input, Output
 
 app = dash.Dash(__name__)
 px.set_mapbox_access_token(
-    'pk.eyJ1IjoibWFya2JlcnJldGgiLCJhIjoiY2ttY3VzOHhtMGVmaDJvbGppMW9jZWRudyJ9.mdmXPjveC_oXO8CHeyxytQ')
+    'pk.eyJ1IjoibWFya2JlcnJldGgiLCJhIjoiY2ttZGx0emZhMGg0MDJ2cDI4bGFkbjYxcyJ9.7AOdgY8-dQl5QF5in2MU0Q')
 
 data_path = '/Users/markberreth/Documents/Python_Projects/Comp_Spend'
 abbott = pd.read_csv(f'{data_path}/Clean_Data/Abbott_17_18_19_Alt.csv')
@@ -80,17 +80,35 @@ def update_graph(option_slctd):
     dfc = dfc.loc[dfc['Program_Year'] == option_slctd]
     # you could write another loc function to filter further
 
-    fig = px.scatter_mapbox(dfc, lat='latitude',
-                            lon='longitude',
-                            color='Number_of_Payments_Included_in_Total_Amount',
-                            hover_data=['Recipient_City',
-                                        'Total_Amount_of_Payment_USDollars'],
-                            size='Total_Amount_of_Payment_USDollars',
-                            mapbox_style='carto_darkmatter',
-                            size_max=20,
-                            labels={'Number_of_Payments_Included_in_Total_Amount': 'Total # Payments',
-                                    'Total_Amount_of_Payment_USDollars': '$ Total'}
-                            )
+    fig = px.scatter(dfc, x='longitude', y='latitude',
+                     color='Number_of_Payments_Included_in_Total_Amount',
+                     size='Total_Amount_of_Payment_USDollars',
+                     labels={'Number_of_Payments_Included_in_Total_Amount': 'Total # Payments',
+                             'Total_Amount_of_Payment_USDollars': 'Total $'},
+                     size_max=50,
+                     custom_data=['Recipient_City', 'Recipient_State', 'Total_Amount_of_Payment_USDollars',
+                                  'Number_of_Payments_Included_in_Total_Amount']
+                     )
+    fig.update_traces(
+        hovertemplate='<br>'.join([
+            'Recipient_City: %{customdata[0]}',
+            'Recipient_State: %{customdata[1]}',
+            'Total_Amount_of_Payment_USDollars: %{customdata[2]:$,.0f}',
+            'Number_of_Payments_Included_in_Total_Amount: %{customdata[3]:,.0f}'
+        ])
+    )
+
+    # fig = px.scatter_mapbox(dfc, lat='latitude',
+    #                         lon='longitude',
+    #                         color='Number_of_Payments_Included_in_Total_Amount',
+    #                         hover_data=['Recipient_City',
+    #                                     'Total_Amount_of_Payment_USDollars'],
+    #                         size='Total_Amount_of_Payment_USDollars',
+    #                         mapbox_style='carto_darkmatter',
+    #                         size_max=20,
+    #                         labels={'Number_of_Payments_Included_in_Total_Amount': 'Total # Payments',
+    #                                 'Total_Amount_of_Payment_USDollars': '$ Total'}
+    #                         )
     fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
 
     return container, fig
